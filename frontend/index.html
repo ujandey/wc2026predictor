@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Cup 2026 Predictor</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">⚽</span>
+      <div>
+        <h1>World Cup 2026 Predictor</h1>
+        <p class="tagline">ELO ratings · calibrated XGBoost · Monte-Carlo tournament simulation</p>
+      </div>
+    </div>
+    <div class="meta" id="meta">loading model…</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="predict">Match Predictor</button>
+    <button class="tab" data-tab="rankings">ELO Rankings</button>
+    <button class="tab" data-tab="simulate">Tournament Sim</button>
+  </nav>
+
+  <main>
+    <!-- MATCH PREDICTOR -->
+    <section id="predict" class="panel active">
+      <div class="card">
+        <h2>Head-to-head prediction</h2>
+        <p class="hint">Pick two teams. Probabilities come from the calibrated model using current ELO and recent form.</p>
+        <div class="matchup">
+          <div class="team-pick">
+            <label>Home / Team A</label>
+            <select id="home"></select>
+          </div>
+          <span class="vs">vs</span>
+          <div class="team-pick">
+            <label>Away / Team B</label>
+            <select id="away"></select>
+          </div>
+        </div>
+        <label class="neutral">
+          <input type="checkbox" id="neutral" checked />
+          Neutral venue (no home advantage)
+        </label>
+        <button id="predictBtn" class="primary">Predict</button>
+
+        <div id="predictResult" class="result hidden">
+          <div class="probrow">
+            <div class="probcol win">
+              <span class="plabel" id="lblHome">Home win</span>
+              <span class="pval" id="pHome">—</span>
+            </div>
+            <div class="probcol draw">
+              <span class="plabel">Draw</span>
+              <span class="pval" id="pDraw">—</span>
+            </div>
+            <div class="probcol loss">
+              <span class="plabel" id="lblAway">Away win</span>
+              <span class="pval" id="pAway">—</span>
+            </div>
+          </div>
+          <div class="stackbar">
+            <div class="seg win" id="barHome"></div>
+            <div class="seg draw" id="barDraw"></div>
+            <div class="seg loss" id="barAway"></div>
+          </div>
+          <div class="elostat" id="eloStat"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RANKINGS -->
+    <section id="rankings" class="panel">
+      <div class="card">
+        <h2>Current ELO rankings</h2>
+        <p class="hint">Computed match-by-match across competitive internationals since 1993.</p>
+        <table class="ranktable">
+          <thead><tr><th>#</th><th>Team</th><th>ELO</th></tr></thead>
+          <tbody id="rankBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SIMULATOR -->
+    <section id="simulate" class="panel">
+      <div class="card">
+        <h2>Tournament simulator</h2>
+        <p class="hint">
+          48 teams · 12 groups · best-of third places · 32-team knockout. Groups are
+          seeded from the model's top 48 teams (editable via <code>data/groups.json</code>).
+        </p>
+        <div class="simctrl">
+          <label>Simulations:
+            <select id="nSims">
+              <option value="1000">1,000</option>
+              <option value="5000" selected>5,000</option>
+              <option value="10000">10,000</option>
+            </select>
+          </label>
+          <button id="simBtn" class="primary">Run simulation</button>
+          <span id="simStatus" class="simstatus"></span>
+        </div>
+
+        <div class="simlayout">
+          <div class="simresults">
+            <h3>Championship probability</h3>
+            <div id="simChart" class="chart"><p class="hint">Run a simulation to see results.</p></div>
+          </div>
+          <div class="groups">
+            <h3>Groups</h3>
+            <div id="groupGrid" class="groupgrid"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Data: martj42 international football results · Model retrains from source data via <code>python -m backend.train</code></p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
